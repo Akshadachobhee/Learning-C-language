@@ -1,0 +1,221 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+struct node 
+{
+   int data;   
+   struct node *leftChild;
+   struct node *rightChild;
+};
+
+struct node *root = NULL;
+
+void insert(int data){
+   struct node *tempNode = 
+      (struct node*) malloc(sizeof(struct node));
+   struct node *current;
+   struct node *parent;
+
+   tempNode->data = data;
+   tempNode->leftChild = NULL;
+   tempNode->rightChild = NULL;
+
+   //if tree is empty
+   if(root == NULL){
+      root = tempNode;
+   }else{
+      current = root;
+      parent = NULL;
+
+      while(1){                
+         parent = current;
+         //go to left of the tree
+         if(data < parent->data){
+            current = current->leftChild;                
+            //insert to the left
+            if(current == NULL){
+               parent->leftChild = tempNode;
+               return;
+            }
+         }//go to right of the tree
+         else{
+            current = current->rightChild;
+            //insert to the right
+            if(current == NULL){
+               parent->rightChild = tempNode;
+               return;
+            }
+         }
+      }            
+   }
+}
+
+struct node* search(int data){
+   struct node *current = root;
+   printf("Visiting elements: ");
+   while(current->data != data){
+      if(current != NULL)
+         printf("%d ",current->data); 
+         //go to left tree
+         if(current->data > data){
+            current = current->leftChild;
+         }//else go to right tree
+         else{                
+            current = current->rightChild;
+         }
+         //not found
+         if(current == NULL){
+            return NULL;
+         }
+      }
+   return current;
+}
+
+void preOrder(struct node* root){
+   if(root!=NULL){
+      printf("%d ",root->data);
+      preOrder(root->leftChild);
+      preOrder(root->rightChild);
+   }
+}
+
+void inOrder(struct node* root){
+   if(root!=NULL){
+      inOrder(root->leftChild);
+      printf("%d ",root->data);          
+      inOrder(root->rightChild);
+   }
+}
+
+void postOrder(struct node* root){
+   if(root!=NULL){            
+      postOrder(root->leftChild);
+      postOrder(root->rightChild);
+      printf("%d ",root->data);
+   }
+}
+
+void traverse(int traversalType){
+   switch(traversalType){
+      case 1:
+         printf("\nPreorder traversal: ");
+         preOrder(root);
+         break;
+      case 2:
+         printf("\nInorder traversal: ");
+         inOrder(root);
+         break;
+      case 3:
+         printf("\nPostorder traversal: ");
+         postOrder(root);
+         break;
+   }            
+}  
+
+int main()
+{
+   /*                     11               //Level 0
+   */
+   insert(11);
+   /*                     11               //Level 0
+   *                      |
+   *                      |---20           //Level 1
+   */
+   insert(20);
+   /*                     11               //Level 0
+   *                      |
+   *                  3---|---20           //Level 1
+   */
+   insert(3);        
+   /*                     11               //Level 0
+   *                      |
+   *                  3---|---20           //Level 1
+   *                           |
+   *                           |--42       //Level 2
+   */
+   insert(42);
+   /*                     11               //Level 0
+   *                      |
+   *                  3---|---20           //Level 1
+   *                           |
+   *                           |--42       //Level 2
+   *                               |
+   *                               |--54   //Level 3
+   */
+   insert(54);
+   /*                     11               //Level 0
+   *                      |
+   *                  3---|---20           //Level 1
+   *                           |
+   *                       16--|--42       //Level 2
+   *                               |
+   *                               |--54   //Level 3
+   */
+   insert(16);
+   /*                     11               //Level 0
+   *                      |
+   *                  3---|---20           //Level 1
+   *                           |
+   *                       16--|--42       //Level 2
+   *                               |
+   *                           32--|--54   //Level 3
+   */
+   insert(32);
+   /*                     11               //Level 0
+   *                      |
+   *                  3---|---20           //Level 1
+   *                  |        |
+   *                  |--9 16--|--42       //Level 2
+   *                               |
+   *                           32--|--54   //Level 3
+   */
+   insert(9);
+   /*                     11               //Level 0
+   *                      |
+   *                  3---|---20           //Level 1
+   *                  |        |
+   *                  |--9 16--|--42       //Level 2
+   *                     |         |
+   *                  4--|     32--|--54   //Level 3
+   */
+   insert(4);
+   /*                     11               //Level 0
+   *                      |
+   *                  3---|---20           //Level 1
+   *                  |        |
+   *                  |--9 16--|--42       //Level 2
+   *                     |         |
+   *                  4--|--10 32--|--54   //Level 3
+   */
+   insert(10);
+
+   struct node * temp = search(32);
+   if(temp!=NULL){
+      printf("Element found.\n");
+      printf("( %d )",temp->data);
+      printf("\n");
+   }else{
+      printf("Element not found.\n");
+   }
+
+   struct node *node1 = search(2);
+   if(node1!=NULL){
+      printf("Element found.\n");
+      printf("( %d )",node1->data);
+      printf("\n");
+   }else{
+      printf("Element not found.\n");
+   }        
+
+   //pre-order traversal
+   //root, left ,right
+   traverse(1);
+   //in-order traversal
+   //left, root ,right
+   traverse(2);
+   //post order traversal
+   //left, right, root
+   traverse(3);       
+}
